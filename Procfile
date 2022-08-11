@@ -1,0 +1,1 @@
+web: gunicorn luckyshop.wsgi --log-file -

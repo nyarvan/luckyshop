@@ -1,0 +1,74 @@
+{% extends 'base_shop.html' %}
+{% load static %}
+{% load manager_tags %}
+
+{% block title %}Список заказів{% endblock %}
+
+{% block content %}
+    <section class="mt-0">
+    <div class="container-fluid">
+     <!-- Category Top Banner -->
+        <div class="py-10 bg-img-cover bg-overlay-dark position-relative overflow-hidden bg-pos-center-center rounded-0"
+             style="background-image: url({% static 'images/banners/banner-category-top.jpg' %});">
+            <div class="container-fluid position-relative z-index-20" data-aos="fade-right" data-aos-delay="300">
+                <h1 class="fw-bold display-6 mb-4 text-white">Cписок замовлень</h1>
+                <h1 class="fw-bold display-6 mb-4 text-white"></h1>
+                <div class="col-12 col-md-6">
+                    <p class="text-white mb-0 fs-5">
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- Category Top Banner -->
+        <div class="accordion mt-3" id="accordionExample">
+    {% for order in page_obj.object_list %}
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading{{ forloop.counter|accordition_id }}">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter|accordition_id }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter|accordition_id }}">
+        Замовлення №{{ order.id }}: {{ order.name }}, {{ order.email }}, {{ order.phone }}
+      </button>
+    </h2>
+    <div id="collapse{{ forloop.counter|accordition_id }}" class="accordion-collapse collapse show" aria-labelledby="heading{{ forloop.counter|accordition_id }}" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+          <p>
+              Спосіб доставки: {{ order.delivery }}
+          </p>
+          <p>
+              Країна {{ order.country }}
+          </p>
+          <p>
+              Місто: {{ order.city }}
+          </p>
+          <p>
+              Адреса: {{ order.address }}
+          </p>
+          <p>
+              Спосіб оплати: {{ order.payment }}
+          </p>
+          <p>Продукти:</p>
+      <div class="row">
+      {% for item in order.items.all %}
+          <div class="col-sm-2">
+              <div class="card" style="width: 18rem;">
+              <img src="{{ item.product.image.url }}" class="card-img-top">
+              <div class="card-body">
+                <p class="card-text">{{ item.product.name }}</p>
+                  <p class="card-text">Ціна: {{ item.product.price }}</p>
+                  <p class="card-text">Розмір: {{ item.size }}</p>
+                  <p class="card-text">Кількість: {{ item.count }}</p>
+              </div>
+            </div>
+          </div>
+      {% endfor %}
+      </div>
+
+      </div>
+        <h2>До сплати: {{ order.get_total_cost }}</h2>
+         <a href="{% url 'manager:close_order' order_pk=order.pk %}" class="btn btn-primary">Закрити замовлення</a>
+    </div>
+  </div>
+    {% endfor %}
+</div>
+    </div>
+    </section>
+{% endblock %}

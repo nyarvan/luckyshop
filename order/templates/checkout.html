@@ -1,0 +1,190 @@
+{% extends 'base_checkout.html' %}
+
+{% block title %}
+    Оформлення заказу
+{% endblock %}
+
+{% block content %}
+    <!-- Main Section-->
+    <section class="mt-0 vh-lg-100">
+        <!-- Page Content Goes Here -->
+        <div class="container">
+            <div class="row g-0 vh-lg-100">
+                <div class="col-lg-7 pt-5 pt-lg-10">
+                    <div class="pe-lg-5">
+                        <!-- Logo-->
+                        <a class="navbar-brand fw-bold fs-3 flex-shrink-0 mx-0 px-0" href="./index.html">
+                                <div class="d-flex align-items-center">
+                                    <svg class="f-w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 77.53 72.26"><path d="M10.43,54.2h0L0,36.13,10.43,18.06,20.86,0H41.72L10.43,54.2Zm67.1-7.83L73,54.2,68.49,62,45,48.47,31.29,72.26H20.86l-5.22-9L52.15,0H62.58l5.21,9L54.06,32.82,77.53,46.37Z" fill="currentColor" fill-rule="evenodd"/></svg>
+                                </div>
+                            </a>
+                        <!-- / Logo-->
+                    <div class="mt-5">
+                        <form method="POST">
+                            {% csrf_token %}
+
+                            <!-- Checkout Panel Information-->
+                            <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-4">
+                              <h3 class="fs-5 fw-bolder m-0 lh-1">Контактна інформація</h3>
+                            </div>
+                            <div class="row">
+                                <!-- Name-->
+                              <div class="col-12">
+                                <div class="form-group">
+                                  <label for="Name" class="form-label">ПІБ</label>
+                                    {{ form.name }}
+                                </div>
+                              </div>
+
+                                <!-- Phone-->
+                              <div class="col-12">
+                                <div class="form-group">
+                                  <label for="phone" class="form-label">Номер телефону</label>
+                                  {{ form.phone }}
+                                </div>
+                              </div>
+
+                              <!-- Email-->
+                              <div class="col-12">
+                                <div class="form-group">
+                                  <label for="email" class="form-label">Email</label>
+                                    {{ form.email }}
+                                </div>
+                              </div>
+                            </div>
+
+                        <!-- Checkout Panel Information-->
+                            <h3 class="fs-5 fw-bolder mb-4 border-bottom pb-4">Спосіб доставки</h3>
+
+                        <!-- Shipping Option-->
+                                 {% for delivery_option in form.delivery %}
+                            <div class="form-check form-group form-check-custom form-radio-custom form-radio-highlight mb-3">
+                                {{ delivery_option.tag }}
+                              <label class="form-check-label" for="{{ delivery_option.id_for_label }}">
+                                <span class="d-flex justify-content-between align-items-start">
+                                  <span>
+                                    <span class="mb-0 fw-bolder d-block">{{ delivery_option.choice_label }}</span>
+                                      {% if '0' in delivery_option.id_for_label %}
+                                    <small class="fw-bolder">Заберіть с 9.00 до 21.00 у магазині: м. Київ</small>
+                                      {% elif '1' in delivery_option.id_for_label %}
+                                      <small class="fw-bolder">Доставка за адресою з ПН-СБ 9.00 до 22.00</small>
+                                      {% else %}
+                                      <small class="fw-bolder">Доставка з 9.00 до 22.00</small>
+                                      {% endif %}
+                                  </span>
+                                {% if '0' in delivery_option.id_for_label %}
+                                    <span class="small fw-bolder text-uppercase">Безкоштовно</span>
+                                      {% elif '1' in delivery_option.id_for_label %}
+                                      <span class="small fw-bolder text-uppercase">149 грн</span>
+                                      {% else %}
+                                      <span class="small fw-bolder text-uppercase">69 грн</span>
+                                {% endif %}
+
+                                </span>
+                              </label>
+                            </div>
+                                 {% endfor %}
+
+                            <h3 class="fs-5 mt-5 fw-bolder mb-4 border-bottom pb-4">Адреса доставки</h3>
+                            <div class="row">
+                            
+                              <!-- Country-->
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                  <label for="country" class="form-label">Країна</label>
+                                    {{ form.country }}
+                                </div>
+                              </div>
+                            
+                              <!-- City-->
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label for="state" class="form-label">Місто</label>
+                                    {{ form.city }}
+                                </div>
+                              </div>
+
+                                <!-- Address-->
+                              <div class="col-12">
+                                <div class="form-group">
+                                  <label for="address" class="form-label">Адреса</label>
+                                  {{ form.address }}
+                                </div>
+                              </div>
+
+                            </div>
+
+                        <!-- Checkout Panel Information-->
+                            <h3 class="fs-5 fw-bolder mb-4 border-bottom pb-4">Спосіб оплати</h3>
+
+                            <div class="row">
+
+                              <!-- Payment Option-->
+                                {% for payment_option in form.payment %}
+                              <div class="col-12">
+                                <div class="form-check form-group form-check-custom form-radio-custom mb-3">
+                                  {{ payment_option.tag }}
+                                  <label class="form-check-label" for="{{ payment_option.id_for_label }}">
+                                    <span class="d-flex justify-content-between align-items-start">
+                                      <span>
+                                        <span class="mb-0 fw-bolder d-block">{{ payment_option.choice_label }}</span>
+                                      </span>
+                                    </span>
+                                  </label>
+                                </div>
+                              </div>
+                                {% endfor %}
+                            </div>
+                            
+                        <div class="pt-5 mt-5 pb-5 border-top d-flex flex-column flex-md-row justify-content-between align-items-center">
+                              <a href="{% url 'shop:homepage' %}" class="btn ps-md-0 btn-link fw-bolder w-100 w-md-auto mb-2 mb-md-0" role="button">Повернутися до покупок</a>
+                              <button type="submit" class="btn btn-dark w-100 w-md-auto">Завершити заказ</button>
+                        </div>
+
+                        </form>
+                    </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-5 bg-light pt-lg-10 aside-checkout pb-5 pb-lg-0 my-5 my-lg-0">
+                    <div class="p-4 py-lg-0 pe-lg-0 ps-lg-5">
+                        <div class="pb-3">
+                            <!-- Cart Item-->
+                            {% for item in cart %}
+                                {% with product=item.product %}
+                            <div class="row mx-0 py-4 g-0 border-bottom">
+                                <div class="col-2 position-relative">
+                                    <picture class="d-block border">
+                                        <img class="img-fluid" src="{{ product.image.url }}" alt="HTML Bootstrap Template by Pixel Rocket">
+                                    </picture>
+                                </div>
+                                <div class="col-9 offset-1">
+                                    <div>
+                                        <h6 class="justify-content-between d-flex align-items-start mb-2">
+                                            {{ product.name }}
+                                            <i class="ri-close-line ms-3"></i>
+                                        </h6>
+                                        <span class="d-block text-muted fw-bolder text-uppercase fs-9">Розмір: {{ item.size }} / К-сть: {{ item.count }}</span>
+                                    </div>
+                                    <p class="fw-bolder text-end text-muted m-0">{{ product.price }} грн</p>
+                                </div>
+                            </div>
+                                {% endwith %}
+                            {% endfor %}
+                            <!-- / Cart Item-->
+                        </div>
+                        <div class="py-4 border-bottom">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="m-0 fw-bold fs-5">До сплати:</p>
+                                </div>
+                                <p class="m-0 fs-5 fw-bold">{{ cart.get_total_price }} грн</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Content -->
+    </section>
+    <!-- / Main Section-->
+{% endblock %}

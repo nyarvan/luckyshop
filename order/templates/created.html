@@ -1,0 +1,16 @@
+{% extends 'base_checkout.html' %}
+
+{% block title %}
+    Ваш заказ успешно оформлен!
+{% endblock %}
+
+{% block content %}
+    <div class="jumbotron text-center">
+      <h1 class="display-3">{{ order.name }}, ваше замовлення №{{ order.id }} оформлено.</h1>
+        <p class="lead"><strong>Ми з вами зв'яжемося у найближчий час</strong> для підтверждення заказу.</p>
+        <hr>
+        <p class="lead">
+        <a class="btn btn-primary btn-sm" href="{% url 'shop:homepage' %}" role="button">Повернутися на головну</a>
+        </p>
+    </div>
+{% endblock %}

@@ -1,0 +1,258 @@
+{% extends 'base_shop.html' %}
+{% load static %}
+{% load shop_tags %}
+
+{% block title %}
+        {{ title }}
+{% endblock %}
+
+
+{% block content %}
+    <!-- Main Section-->
+    <section class="mt-0 ">
+        <!-- Page Content Goes Here -->
+
+        <!-- Category Top Banner -->
+        {% if not category %}
+        <div class="py-10 bg-img-cover bg-overlay-dark position-relative overflow-hidden bg-pos-center-center rounded-0"
+             style="background-image: url({% static 'images/banners/banner-category-top.jpg' %});">
+        {% else %}
+        <div class="py-10 bg-img-cover bg-overlay-dark position-relative overflow-hidden bg-pos-center-center rounded-0"
+             style="background-image: url({{ category.image.url }});">
+        {% endif %}
+            <div class="container-fluid position-relative z-index-20" data-aos="fade-right" data-aos-delay="300">
+                <h1 class="fw-bold display-6 mb-4 text-white">{{ title }}</h1>
+                <h1 class="fw-bold display-6 mb-4 text-white"></h1>
+                <div class="col-12 col-md-6">
+                    <p class="text-white mb-0 fs-5">
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- Category Top Banner -->
+
+        <div class="container-fluid" data-aos="fade-in">
+            <!-- Category Toolbar-->
+                <div class="d-flex justify-content-between items-center pt-5 pb-4 flex-column flex-lg-row">
+                    <div>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                              <li class="breadcrumb-item"><a href="{% url 'shop:homepage' %}">Головна</a></li>
+                                {% if category %}
+                              <li class="breadcrumb-item active"><a href="{% url 'shop:category_products_view' slug_category=category.slug %}">{{ category.full_name }}</a></li>
+                                {% endif %}
+                            </ol>
+                        </nav>
+                        <h1 class="fw-bold fs-3 mb-2">Результат ({{ products|length }})</h1>
+                    </div>
+                    <div class="d-flex justify-content-end align-items-center mt-4 mt-lg-0 flex-column flex-md-row">
+
+                        <!-- Filter Trigger-->
+                        <button class="btn bg-light p-3 me-md-3 d-flex align-items-center fs-7 lh-1 w-100 mb-2 mb-md-0 w-md-auto " type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFilters" aria-controls="offcanvasFilters">
+                            <i class="ri-equalizer-line me-2"></i> Фільтр
+                        </button>
+                        <!-- / Filter Trigger-->
+
+                        <!-- Sort Options-->
+                           <div class="dropdown">
+                              <button class="btn btn-secondary dropdown-toggle btn-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Сортування
+                              </button>
+                              <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ path|get_sort:"new_in" }}">За новинками</a></li>
+                                <li><a class="dropdown-item" href="{{ path|get_sort:"price" }}">Від дешевших</a></li>
+                                <li><a class="dropdown-item" href="{{ path|get_sort:"-price" }}">Від дорогих</a></li>
+                              </ul>
+                           </div>
+                        <!-- / Sort Options-->
+                    </div>
+                </div>
+            <!-- /Category Toolbar-->
+
+            <!-- Products-->
+            <div class="row g-4">
+                {% for product in page_obj.object_list %}
+
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <!-- Card Product-->
+                        <div class="card border border-transparent position-relative overflow-hidden h-100 transparent">
+                            <div class="card-img position-relative">
+                                <div class="card-badges">
+                                    {% if product.special and product.new_in %}
+                                        <span class="badge badge-card"><span class="f-w-2 f-h-2 bg-danger rounded-circle d-block me-1"></span> Скидка</span>
+                                        <span class="badge badge-card"><span class="f-w-2 f-h-2 bg-success rounded-circle d-block me-1"></span> Новинка</span>
+                                    {% elif product.new_in %}
+                                        <span class="badge badge-card"><span class="f-w-2 f-h-2 bg-success rounded-circle d-block me-1"></span> Новинка</span>
+                                    {% elif not product.available %}
+                                        <span class="badge badge-card"><span class="f-w-2 f-h-2 bg-secondary rounded-circle d-block me-1"></span> Продано</span>
+                                    {% elif product.special%}
+                                        <span class="badge badge-card"><span class="f-w-2 f-h-2 bg-danger rounded-circle d-block me-1"></span> Скидка</span>
+                                    {% endif %}
+                                </div>
+                                <span class="position-absolute top-0 end-0 p-2 z-index-20 text-muted"><i class="ri-heart-line"></i></span>
+                                <picture class="position-relative overflow-hidden d-block bg-light">
+                                    <img class="w-100 img-fluid position-relative z-index-10" title="" src="{{ product.image.url }}" alt="">
+                                </picture>
+                                    <div class="position-absolute start-0 bottom-0 end-0 z-index-20 p-2">
+                                            <button class="btn btn-quick-add">
+                                                <i class="ri-add-line me-2"></i> Додати в кошик
+                                            </button>
+                                    </div>
+                            </div>
+                            <div class="card-body px-0">
+                                <a class="text-decoration-none link-cover" href="{% url 'shop:product' slug_product=product.slug %}">{{ product.full_name }}</a>
+                                    {% if product.special %}
+                                        <p class="mt-2 mb-0 small"><s class="text-muted">{{ product.old_price }}</s> <span class="text-danger">{{ product.price }} грн</span></p>
+                                    {% elif not product.available %}
+                                        <p class="mt-2 mb-0 small text-muted">Продано</p>
+                                    {% else %}
+                                        <p class="mt-2 mb-0 small">{{ product.price }} грн</p>
+                                    {% endif %}
+                            </div>
+                        </div>
+                        <!--/ Card Product-->
+                    </div>
+            {% endfor %}
+            </div>
+            <!-- / Products-->
+
+            <!-- Pagination-->
+        {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center pagination-lg">
+                {% if page_obj.has_previous%}
+                    <li class="page-item"><a class="page-link" href="{{ path|get_page:page_obj.previous_page_number }}">Назад</a></li>
+                {% endif %}
+                    {% for p in page_obj.paginator.page_range %}
+                        {% if page_obj.number == p %}
+                            <li class="page-item active"><a class="page-link" href="{{ path|get_page:p }}">{{ p }}</a></li>
+                        {% elif p > page_obj.number|add:-3 and p < page_obj.number|add:3 %}
+                            <li class="page-item"><a class="page-link" href="{{ path|get_page:p }}">{{ p }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="{{ path|get_page:page_obj.next_page_number }}">Вперед</a></li>
+                {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+            <!-- / Pagination-->
+        </div>
+
+        <!-- /Page Content -->
+    </section>
+    <!-- / Main Section-->
+
+    <!-- Offcanvas Imports-->
+    <!-- Filters Offcanvas-->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasFilters" aria-labelledby="offcanvasFiltersLabel">
+      <div class="offcanvas-header pb-0 d-flex align-items-center">
+        <h5 class="offcanvas-title" id="offcanvasFiltersLabel">Фільтр</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="d-flex flex-column justify-content-between w-100 h-100">
+          <form method="GET" action="#">
+          <!-- Filters-->
+          <div>
+    
+            <!-- Price Filter -->
+            <div class="py-4 widget-filter widget-filter-price border-top">
+              <a class="small text-body text-decoration-none text-secondary-hover transition-all transition-all fs-6 fw-bolder d-block collapse-icon-chevron"
+                data-bs-toggle="collapse" href="#filter-modal-price" role="button" aria-expanded="true"
+                aria-controls="filter-modal-price">
+                Ціна
+              </a>
+              <div id="filter-modal-price" class="collapse show">
+                <div class="filter-price mt-6"></div>
+                    <div class="d-flex justify-content-between align-items-center mt-7">
+                        <div class="input-group mb-0 me-2 border">
+                            <span class="input-group-text bg-transparent fs-7 p-2 text-muted border-0">грн</span>
+                            <input type="number" min="00" max="20000" step="1" class="filter-min form-control-sm border flex-grow-1 text-muted border-0" name="min_price">
+                        </div>
+                        <div class="input-group mb-0 ms-2 border">
+                            <span class="input-group-text bg-transparent fs-7 p-2 text-muted border-0">грн</span>
+                            <input type="number" min="00" max="20000" step="1" class="filter-max form-control-sm flex-grow-1 text-muted border-0" name=max_price>
+                        </div>
+                    </div>
+              </div>
+            </div>
+            <!-- / Price Filter -->
+    
+            <!-- Sizes Filter -->
+              {% get_sizes_clothes as sizes_clothes %}
+              {% get_sizes_shoes as sizes_shoes %}
+            <div class="py-4 widget-filter border-top">
+              <p class="small text-body text-decoration-none text-secondary-hover transition-all transition-all fs-6 fw-bolder d-block"
+                data-bs-toggle="collapse" aria-expanded="true"
+                aria-controls="filter-modal-sizes">
+                Розмір:
+              </p>
+              <a class="small text-body text-decoration-none text-secondary-hover transition-all transition-all fs-6 fw-bolder d-block collapse-icon-chevron"
+                data-bs-toggle="collapse" href="#filter-modal-sizes-clothes" role="button" aria-expanded="true"
+                aria-controls="filter-modal-sizes">
+                Одяг
+              </a>
+              <div id="filter-modal-sizes-clothes" class="collapse show">
+                <div class="filter-options mt-3">
+                    {% for size in sizes_clothes %}
+                  <div class="form-group d-inline-block mr-2 mb-2 form-check-bg form-check-custom">
+                      <input type="checkbox" class="form-check-bg-input" id="filter-sizes-modal-{{ size.id }}" name="size_cloth-{{ size.id }}">
+                      <label class="form-check-label fw-normal" for="filter-sizes-modal-{{ size.id }}">{{ size.name }}</label>
+                  </div>
+                    {% endfor %}
+                </div>
+              </div>
+              <a class="small text-body text-decoration-none text-secondary-hover transition-all transition-all fs-6 fw-bolder d-block collapse-icon-chevron mt-4"
+                data-bs-toggle="collapse" href="#filter-modal-sizes-shoes" role="button" aria-expanded="true"
+                aria-controls="filter-modal-sizes">
+                Взуття
+              </a>
+              <div id="filter-modal-sizes-shoes" class="collapse show">
+                <div class="filter-options mt-3">
+                    {% for size in sizes_shoes %}
+                  <div class="form-group d-inline-block mr-2 mb-2 form-check-bg form-check-custom">
+                      <input type="checkbox" class="form-check-bg-input" id="filter-sizes-modal-{{ size.id }}" name="size_shoes-{{ size.id }}">
+                      <label class="form-check-label fw-normal" for="filter-sizes-modal-{{ size.id }}">{{ size.name }}</label>
+                  </div>
+                    {% endfor %}
+                </div>
+              </div>
+
+            </div>
+            <!-- / Sizes Filter -->
+    
+            <!-- Colour Filter -->
+                {% get_colors as colors %}
+            <div class="py-4 widget-filter border-top">
+              <a class="small text-body text-decoration-none text-secondary-hover transition-all transition-all fs-6 fw-bolder d-block collapse-icon-chevron"
+                data-bs-toggle="collapse" href="#filter-modal-colour" role="button" aria-expanded="true"
+                aria-controls="filter-modal-colour">
+                Колір
+              </a>
+              <div id="filter-modal-colour" class="collapse show">
+                <div class="filter-options mt-3">
+                    {% for color in colors %}
+                  <div class="form-group d-inline-block mr-1 mb-1 form-check-solid-bg-checkmark form-check-custom {{ color.css_tag }}">
+                      <input type="checkbox" class="form-check-color-input" id="filter-colours-modal-{{ color.id }}" name="color-{{ color.id }}">
+                      <label class="form-check-label" for="filter-colours-modal-{{ color.id }}"></label>
+                  </div>
+                    {% endfor %}
+                </div>
+              </div>
+            </div>
+            <!-- / Colour Filter -->
+          </div>
+          <!-- / Filters-->
+    
+          <!-- Filter Button-->
+          <div class="d-grid">
+            {% comment %}<a href="#" class="btn btn-dark mt-2 d-block hover-lift-sm hover-boxshadow" data-bs-dismiss="offcanvas" aria-label="Close">Показать</a>{% endcomment %}
+              <button type="submit" class="btn btn-dark mt-2 d-block hover-lift-sm hover-boxshadow" aria-label="Close">Показати</button>
+          </div>
+          <!-- /Filter Button-->
+          </form>
+        </div>
+      </div>
+    </div>
+{% endblock %}

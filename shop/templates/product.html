@@ -1,0 +1,272 @@
+{% extends 'base_shop.html' %}
+{% load static %}
+
+{% block title %}
+    {{ product.name }}
+{% endblock %}
+
+{% block content %}
+<!-- Main Section-->
+    <section class="mt-0 ">
+        <!-- Page Content Goes Here -->            
+        
+        <!-- Breadcrumbs-->
+        <div class="bg-dark py-6">
+            <div class="container-fluid">
+                <nav class="m-0" aria-label="breadcrumb">
+                    <ol class="breadcrumb m-0">
+                      <li class="breadcrumb-item breadcrumb-light"><a href="{% url 'shop:homepage' %}">Головна</a></li>
+                      <li class="breadcrumb-item breadcrumb-light">
+                          <a href="{% url 'shop:products_type_clothes_view' slug_type_clothes=product.type.slug %}">
+                              {{ product.type.full_name }}
+                          </a>
+                      </li>
+                      <li class="breadcrumb-item  breadcrumb-light active" aria-current="page">{{ product.name }}</li>
+                    </ol>
+                </nav>            </div>
+        </div>
+        <!-- / Breadcrumbs-->
+
+        <div class="container-fluid mt-5">
+
+            <!-- Product Top Section-->
+            <div class="row g-9" data-sticky-container>
+
+                <!-- Product Images-->
+                <div class="col-12 col-md-6 col-xl-7">
+                    <div class="row g-3" data-aos="fade-right">
+                        <div class="col-12">
+                            <picture>
+                                <img class="img-fluid" data-zoomable src="{{ product.image.url }}" width="1200">
+                            </picture>
+                        </div>
+                        {% for image in other_images %}
+                        <div class="col-12">
+                            <picture>
+                                <img class="img-fluid" data-zoomable src="{{ image.image.url }}" width="1200">
+                            </picture>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- /Product Images-->
+    
+                <!-- Product Information-->
+                <div class="col-12 col-md-6 col-lg-5">
+                    <div class="sticky-top top-5">
+                        <div class="pb-3" data-aos="fade-in">
+                            <h1 class="mb-1 fs-2 fw-bold">{{ product.full_name }}</h1>
+                            <div class="d-flex justify-content-between align-items-center">
+                                {% if product.special %}
+                                    <p class="fs-4 m-0">
+                                        <s class="text-muted">{{ product.old_price }}</s>
+                                        <span class="text-danger"> {{ product.price }}</span>
+                                    </p>
+
+                                {% else %}
+                                    <p class="fs-4 m-0">{{ product.price }}</p>
+                                {% endif %}
+                            </div>
+                        <form method="GET" action="{% url 'cart:cart_add' product_id=product.id %}">
+                            <div class="border-top mt-4 mb-3 product-option">
+                                <small class="text-uppercase pt-4 d-block fw-bolder">
+                                    <span class="text-muted">Розміри в наявності</span> :
+                                </small>
+                                <div class="mt-4 d-flex justify-content-start flex-wrap align-items-start">
+                                    {% for size in product.size.all %}
+                                    <div class="form-check-option form-check-rounded">
+                                        <input required type="radio" name="size" value="{{ size.name }}" id="option-sizes-{{ size.id }}">
+                                        <label for="option-sizes-{{ size.id }}">
+                                            <small>{{ size.name }}</small>
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <input type="submit" name="add_to_buy" value="Купити" class="btn btn-outline-dark w-100 mt-4 mb-0 hover-lift-sm hover-boxshadow">
+                            <input type="submit" name="add_cart" value="Додати в кошик" class="btn btn-dark w-100 mt-4 mb-0 hover-lift-sm hover-boxshadow">
+                        </form>
+                            <!-- Product Highlights-->
+                                <div class="my-5">
+                                    <div class="row">
+                                        <div class="col-12 col-md-4">
+                                            <div class="text-center px-2">
+                                                <i class="ri-24-hours-line ri-2x"></i>
+                                                <small class="d-block mt-1">Швидка доставка</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <div class="text-center px-2">
+                                                <i class="ri-secure-payment-line ri-2x"></i>
+                                                <small class="d-block mt-1">Захищена платіжна система</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <div class="text-center px-2">
+                                                <i class="ri-service-line ri-2x"></i>
+                                                <small class="d-block mt-1">Безкоштовне повернення товару</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <!-- / Product Highlights-->
+                        
+                            <!-- Product Accordion -->
+                            <div class="accordion" id="accordionProduct">
+                                <div class="accordion-item">
+                                  <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                      Опис
+                                    </button>
+                                  </h2>
+                                  <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionProduct">
+                                    <div class="accordion-body">
+                                        <p class="m-0">{{ product.description }}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingTwo">
+                                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        Состав & Уход
+                                      </button>
+                                    </h2>
+                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionProduct">
+                                      <div class="accordion-body">
+                                          <ul class="list-group list-group-flush">
+                                              <li class="list-group-item d-flex border-0 row g-0 px-0">
+                                                  <span class="col-4 fw-bolder">Состав</span>
+                                                  <span class="col-7 offset-1">{{ product.detail }}</span>
+                                              </li>
+                                              <li class="list-group-item d-flex border-0 row g-0 px-0">
+                                                  <span class="col-4 fw-bolder">Уход</span>
+                                                  <span class="col-7 offset-1">{{ product.info }}</span>
+                                              </li>
+                                          </ul>
+                                      </div>
+                                    </div>
+                                  </div>        
+                                <div class="accordion-item">
+                                  <h2 class="accordion-header" id="headingThree">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                      Доставка & Повернення
+                                    </button>
+                                  </h2>
+                                  <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionProduct">
+                                    <div class="accordion-body">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item d-flex border-0 row g-0 px-0">
+                                                <span class="col-4 fw-bolder">Доставка</span>
+                                                <span class="col-7 offset-1">з ПН-СБ 9.00 - 22.00. Відправка на наступний день після оформлення заказу.</span>
+                                            </li>
+                                            <li class="list-group-item d-flex border-0 row g-0 px-0">
+                                                <span class="col-4 fw-bolder">Повернення</span>
+                                                <span class="col-7 offset-1">Повернення протягом 30 днів</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            <!-- / Product Accordion-->
+                        </div>                    </div>
+                </div>
+                <!-- / Product Information-->
+            </div>
+            <!-- / Product Top Section-->
+
+            <div class="row g-0">
+
+                <!-- Related Products-->
+                <div class="col-12" data-aos="fade-up">
+                    <h3 class="fs-4 fw-bolder mt-7 mb-4">Вам сподобається</h3>
+                    <!-- Swiper Latest -->
+                    <div class="swiper-container" data-swiper data-options='{
+                        "spaceBetween": 10,
+                        "loop": true,
+                        "autoplay": {
+                          "delay": 5000,
+                          "disableOnInteraction": false
+                        },
+                        "navigation": {
+                          "nextEl": ".swiper-next",
+                          "prevEl": ".swiper-prev"
+                        },   
+                        "breakpoints": {
+                          "600": {
+                            "slidesPerView": 2
+                          },
+                          "1024": {
+                            "slidesPerView": 3
+                          },       
+                          "1400": {
+                            "slidesPerView": 4
+                          }
+                        }
+                      }'>
+                      <div class="swiper-wrapper">
+                          {% for item in products_be_like %}
+                            <div class="swiper-slide">
+                              <!-- Card Product-->
+                              <div class="card border border-transparent position-relative overflow-hidden h-100 transparent">
+                                  <div class="card-img position-relative">
+                                      <div class="card-badges">
+                                          {% if item.special and item.new_in %}
+                                            <span class="badge badge-card"><span class="f-w-2 f-h-2 bg-danger rounded-circle d-block me-1"></span> Скидка</span>
+                                            <span class="badge badge-card"><span class="f-w-2 f-h-2 bg-success rounded-circle d-block me-1"></span> Новинка</span>
+                                          {% elif item.new_in %}
+                                            <span class="badge badge-card"><span class="f-w-2 f-h-2 bg-success rounded-circle d-block me-1"></span> Новинка</span>
+                                          {% elif not item.available %}
+                                            <span class="badge badge-card"><span class="f-w-2 f-h-2 bg-secondary rounded-circle d-block me-1"></span> Продано</span>
+                                          {% elif item.special%}
+                                            <span class="badge badge-card"><span class="f-w-2 f-h-2 bg-danger rounded-circle d-block me-1"></span> Скидка</span>
+                                          {% endif %}
+                                      </div>
+                                      <span class="position-absolute top-0 end-0 p-2 z-index-20 text-muted"><i class="ri-heart-line"></i></span>
+                                      <picture class="position-relative overflow-hidden d-block bg-light">
+                                          <img class="w-100 img-fluid position-relative z-index-10" title="" src="{{ item.image.url }}" alt="">
+                                      </picture>
+                                          <div class="position-absolute start-0 bottom-0 end-0 z-index-20 p-2">
+                                              <button class="btn btn-quick-add">
+                                                  <i class="ri-add-line me-2"></i> Додати в кошик
+                                              </button>
+                                          </div>
+                                  </div>
+                                  <div class="card-body px-0">
+                                      <a class="text-decoration-none link-cover" href="{% url 'shop:product' slug_product=item.slug %}">{{ item.name }}</a>
+                                      <p class="mt-2 mb-0 small">
+                                          {% if item.special %}
+                                              <s class="text-muted">{{ item.old_price }}</s>
+                                              <span class="text-danger">{{ item.price }}</span>
+                                          {% elif not item.available %}
+                                              <p class="mt-2 mb-0 small text-muted">Sold Out</p>
+                                          {% else %}
+                                              <p class="mt-2 mb-0 small">{{ item.price }}</p>
+                                          {% endif %}
+                                      </p>
+                                  </div>
+                              </div>
+                              <!--/ Card Product-->
+                            </div>
+                          {% endfor %}
+                      </div>
+                    
+                      <!-- Add Arrows -->
+                      <div
+                        class="swiper-prev top-50  start-0 z-index-30 cursor-pointer transition-all bg-white px-3 py-4 position-absolute z-index-30 top-50 start-0 mt-n8 d-flex justify-content-center align-items-center opacity-50-hover">
+                        <i class="ri-arrow-left-s-line ri-lg"></i></div>
+                      <div
+                        class="swiper-next top-50 end-0 z-index-30 cursor-pointer transition-all bg-white px-3 py-4 position-absolute z-index-30 top-50 end-0 mt-n8 d-flex justify-content-center align-items-center opacity-50-hover">
+                        <i class="ri-arrow-right-s-line ri-lg"></i></div>
+                    
+                    
+                    </div>
+                    <!-- / Swiper Latest-->
+                </div>
+                <!-- / Related Products-->
+            </div>
+        </div>
+        <!-- /Page Content -->
+    </section>
+<!-- / Main Section-->
+{% endblock %}

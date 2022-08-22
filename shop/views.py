@@ -72,7 +72,7 @@ class HomepageView(ListView):
         cart = Cart(self.request)
 
         context = super().get_context_data(**kwargs)
-        type_cloth = TypeClothes.objects.select_related('catalog').order_by('?')[:8]
+        type_cloth = TypeClothes.objects.distinct().select_related('catalog').order_by('?')[:8]
         context['type'] = type_cloth
         context['path'] = path
         context['cart'] = cart
